@@ -6,17 +6,6 @@ import os
 # IKE policy config #
 #######################
 
-
-#with open('input/ipsecForm.csv','rt') as ipsecForm:
-#		vpnForm = csv.reader(ipsecForm, delimiter = ',', quotechar = '|')
-#		vpnForm = list(vpnForm)
-#		ike_pol = vpnForm[1][4]
-#		ike_lifetime = vpnForm[1][5]
-#		list_prop = ike_pol.split('_')
-#		enc = list_prop[0]
-#		hash = list_prop[1]
-#		grp = list_prop[2]
-
 def create_ike_pol(id,ikev,enc,hash,grp,lifetime):
 	print("starting ike_pol")
 	if ikev == '1':
