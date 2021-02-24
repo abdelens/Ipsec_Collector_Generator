@@ -1,1 +1,114 @@
+!!!!Create IKE proposal!!!!
+
+
+crypto ikev1 policy 10
+authentication pre-share
+encryption aes
+hash sha
+group 2
+lifetime 64800
+
+crypto ikev1 policy 11
+authentication pre-share
+encryption 3des
+hash md5
+group 2
+lifetime 86400
+
+crypto ikev1 policy 12
+authentication pre-share
+encryption aes-256
+hash sha
+group 2
+lifetime 28800
+
+crypto ikev1 policy 13
+authentication pre-share
+encryption aes-256
+hash sha
+group 2
+lifetime 86400
+
+crypto ikev2 policy 10
+encryption aes-256 aes-192 aes
+integrity sha512 sha384 sha256 sha md5
+group 5 2 14
+prf sha512 sha384 sha256 sha md5
+lifetime seconds 86400
+
+!!!!!*****Create VPN IPSEC for Partner:  PART1 **************!!!!
+
+!!!!Create ipsec proposal!!!!
+
+crypto ipsec ikev1 transform-set TS_IKEv1_AES_SHA esp-aes esp-sha-hmac
+
+!!!!Create Tunnel-group!!!!
+
+tunnel-group 2.2.2.2 type ipsec-l2l
+tunnel-group 2.2.2.2 ipsec-attributes
+ ikev1 pre-shared-key noise123
+
+!!!!Create ACL for encryption domain!!!!
+
+access-list PART1 extended permit ip host 10.10.10.10 20.20.20.20 255.255.255.7
+
+!!!!Create CryptoMap!!!!
+
+crypto map OUTSIDE_MAP 100 annotation CryptoMap_PART1
+crypto map OUTSIDE_MAP 100 match address PART1
+crypto map OUTSIDE_MAP 100 set peer 2.2.2.2
+crypto map OUTSIDE_MAP 100 set ikev1 transform-set TS_IKEv1_AES_SHA
+
+!!!!!*****Create VPN IPSEC for Partner:  PART2 **************!!!!
+
+!!!!Create ipsec proposal!!!!
+
+!!!! AES_SHA already exist!!!!!
+
+
+!!!!Create Tunnel-group!!!!
+
+tunnel-group 3.3.3.3 type ipsec-l2l
+tunnel-group 3.3.3.3 ipsec-attributes
+ ikev1 pre-shared-key kiding123
+
+!!!!Create ACL for encryption domain!!!!
+
+access-list PART2 extended permit ip 12.12.12.0 255.255.255.3 13.13.13.0 255.255.255.0
+access-list PART2 extended permit ip 12.12.12.0 255.255.255.3 host 14.14.14.14
+
+!!!!Create CryptoMap!!!!
+
+crypto map OUTSIDE_MAP 101 annotation CryptoMap_PART2
+crypto map OUTSIDE_MAP 101 match address PART2
+crypto map OUTSIDE_MAP 101 set peer 3.3.3.3
+crypto map OUTSIDE_MAP 101 set ikev1 transform-set TS_IKEv1_AES_SHA
+crypto map OUTSIDE_MAP 101 set pfs group2
+
+!!!!!*****Create VPN IPSEC for Partner:  PART3 **************!!!!
+
+!!!!Create ipsec proposal!!!!
+
+crypto ipsec ikev2 ipsec-proposal TS_IKEv2_AES-256_SHA
+ protocol esp encryption aes-256
+ protocol esp integrity sha
+
+!!!!Create Tunnel-group!!!!
+
+tunnel-group 4.4.4.4 type ipsec-l2l
+tunnel-group 4.4.4.4 ipsec-attributes
+ ikev2 remote-authentication pre-shared-key testtest
+ ikev2 local-authentication pre-shared-key testtest
+
+!!!!Create ACL for encryption domain!!!!
+
+access-list PART3 extended permit ip host 15.15.15.15 30.30.30.0 255.255.255.15
+
+!!!!Create CryptoMap!!!!
+
+crypto map OUTSIDE_MAP 102 annotation CryptoMap_PART3
+crypto map OUTSIDE_MAP 102 match address PART3
+crypto map OUTSIDE_MAP 102 set peer 4.4.4.4
+crypto map OUTSIDE_MAP 102 set ikev2 ipsec-proposal TS_IKEv2_AES-256_SHA
+crypto map OUTSIDE_MAP 102 set pfs group5
 
