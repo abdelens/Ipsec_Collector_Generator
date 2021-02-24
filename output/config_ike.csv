@@ -1,0 +1,5 @@
+1;aes;sha;pre-share;2;64800
+1;3des;md5;pre-share;2;86400
+1;aes-256;sha;pre-share;2;28800
+1;aes-256;sha;pre-share;2;86400
+2;aes-cbc-256 aes-cbc-192 aes-cbc-128;sha512 sha384 sha256 sha1 md5;pre-share;5 2 14;86400
