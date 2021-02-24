@@ -1,7 +1,6 @@
 # Ipsec_Gen
 Script pyhton to migrate ipsec ikev1/ikev2 configuration from Cisco IOS Router to Cisco ASA firewall.
 
-README.md
 1/ipsec-collect.py
 
 This script allows you to collect ipsec ikev1/ikev2 configurations from Cisco Router (IOS)
