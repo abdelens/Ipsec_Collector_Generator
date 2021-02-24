@@ -1,0 +1,93 @@
+!!this an exemple of input file (more system:running-config)
+..
+crypto ikev2 proposal default
+ encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
+ integrity sha512 sha384 sha256 sha1 md5
+ group 5 2 14
+
+crypto ikev2 keyring Kr_Part3
+ peer Part3
+  address 4.4.4.4
+  pre-shared-key local testtest
+  pre-shared-key remote testtest
+ !
+
+crypto ikev2 profile Prof_Part3
+ description Phase2_VPN_Part3
+ match address local interface GigabitEthernet0/1
+ match identity remote address 4.4.4.4 255.255.255.255
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local Kr_Part3
+!
+!
+!
+crypto isakmp policy 10
+ encr aes
+ authentication pre-share
+ group 2
+ lifetime 64800
+!
+crypto isakmp policy 11
+ encr 3des
+ hash md5
+ authentication pre-share
+ group 2
+ lifetime 28800
+!
+crypto isakmp policy 12
+ encr 3des
+ hash md5
+ authentication pre-share
+ group 2
+ lifetime 28800
+!
+crypto isakmp policy 13
+ encr aes 256
+ authentication pre-share
+ group 2
+ lifetime 28800
+!
+crypto isakmp policy 15
+ encr aes 256
+ authentication pre-share
+ group 2
+!
+
+..
+crypto isakmp key noise123 address 2.2.2.2
+crypto isakmp key kiding123 address 3.3.3.3
+..
+crypto ipsec transform-set ts_aes_sha esp-aes esp-sha-hmac
+ mode tunnel
+crypto ipsec transform-set ts_3des_md5 esp-3des esp-md5-hmac
+ mode tunnel
+crypto ipsec transform-set ts_3des_sha esp-3des esp-sha-hmac
+ mode tunnel
+crypto ipsec transform-set ts_aes256_sha esp-aes 256 esp-sha-hmac
+ mode tunnel
+
+..
+crypto map vpn-internet-map 10 ipsec-isakmp
+ description Phase 2 protocols ipsec Part1
+ set peer 2.2.2.2
+ set transform-set ts_aes_sha
+ match address 100
+crypto map vpn-internet-map 11 ipsec-isakmp
+ description Phase 2 protocols ipsec Part2
+ set peer 3.3.3.3
+ set transform-set ts_aes_sha
+ set pfs group2
+ match address 101
+crypto map vpn-internet-map 12 ipsec-isakmp
+ description Phase 2 protocols ipsec Part3
+ set peer 4.4.4.4
+ set transform-set ts_aes256_sha
+ set pfs group5
+ set ikev2-profile Prof_Part3
+ match address 102
+..
+access-list 100 permit ip host 10.10.10.10 20.20.20.20 0.0.0.248
+access-list 101 permit ip 12.12.12.0 0.0.0.252 13.13.13.0 0.0.0.255
+access-list 101 permit ip 12.12.12.0 0.0.0.252 host 14.14.14.14
+access-list 102 permit ip host 15.15.15.15 30.30.30.0 0.0.0.240
