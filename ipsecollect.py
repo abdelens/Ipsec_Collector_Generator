@@ -88,7 +88,7 @@ with open ('input/'+inputfile, 'rt') as myfile:
 			elif "crypto ikev2 proposal" in line:
 				i=ind
 				prop2=[]
-				while i < (ind+4):
+				while i < (ind+3):
 					if (getline(myfile.name,i+1).split()[0]) == "encryption":
 						#print(len(getline(myfile.name,i+1).split()),getline(myfile.name,i+1).split())
 						prop2.append("2")
